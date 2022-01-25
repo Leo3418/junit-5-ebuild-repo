@@ -33,8 +33,7 @@ EXPORT_FUNCTIONS src_test
 
 if has test ${JAVA_PKG_IUSE}; then
 	DEPEND="test? (
-		dev-java/junit-jupiter-api:0
-		dev-java/junit-jupiter-engine:0
+		dev-java/junit-jupiter:0
 		dev-java/junit-platform-console:0
 	)"
 fi
@@ -89,7 +88,7 @@ java-pkg-junit-5_src_test() {
 		return
 	fi
 
-	local junit_5_classpath="junit-jupiter-api,junit-jupiter-engine"
+	local junit_5_classpath="junit-jupiter"
 	if [[ -z "${JAVA_TEST_GENTOO_CLASSPATH}" ]]; then
 		JAVA_TEST_GENTOO_CLASSPATH="${junit_5_classpath}"
 	else
