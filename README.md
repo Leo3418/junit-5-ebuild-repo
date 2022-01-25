@@ -23,10 +23,10 @@ Packages may be removed, and incompatible eclass changes may occur at any time.
   - [x] `junit-jupiter-api`
   - [x] `junit-jupiter-engine`
 - [x] Create an experimental eclass that can launch tests on the JUnit Platform
-- [ ] Create packages to support [parameterized
+- [x] Create packages to support [parameterized
   tests][junit-5-parameterized-tests]
-  - [ ] `com.univocity:univocity-parsers:2.9.1`
-  - [ ] `junit-jupiter-params`
+  - [x] `com.univocity:univocity-parsers:2.9.1`
+  - [x] `junit-jupiter-params`
 - [ ] Use packages and eclasses in this repository to run test suites of
   packages that depend on JUnit Jupiter
   - [ ] <https://bugs.gentoo.org/829072>
@@ -49,6 +49,9 @@ Packages may be removed, and incompatible eclass changes may occur at any time.
   - [ ] A program/script that bumps all `dev-java/junit-*` packages' version
   - [ ] Support for automatically modifying `MAVEN_ID` and checking its
     correctness
+  - [ ] Test updating JUnit 5 packages to 5.8.2
+    - [ ] Test building JUnit 5.8.2 with Java 8, as the upstream starts to
+      require JDK 17 for building since 5.8
 
 [junit-5-parameterized-tests]: https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests
 [gh-1]: https://github.com/Leo3418/junit-5-ebuild-repo/issues/1
