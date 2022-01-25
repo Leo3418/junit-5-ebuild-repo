@@ -65,9 +65,11 @@ ejunit5() {
 		$(printf -- '-c=%q ' "${@}" )
 	)
 	debug-print "Calling: java -cp \"${cp}\" -Djava.io.tmpdir=\"${T}\" -Djava.awt.headless=true ${JAVA_TEST_EXTRA_ARGS[@]} ${runner} ${@}"
+	# JUnit 5 does not have indicator for in-progress tests
+	ebegin "Running JUnit 5 tests"
 	java -cp "${cp}" -Djava.io.tmpdir="${T}/" -Djava.awt.headless=true \
 		${JAVA_TEST_EXTRA_ARGS[@]} ${runner} "${runner_args[@]}" ||
-		die "Running JUnit 5 failed"
+		die "JUnit 5 tests failed"
 }
 
 # @FUNCTION: java-pkg-junit-5_src_test
