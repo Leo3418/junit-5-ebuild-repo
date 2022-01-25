@@ -25,6 +25,12 @@ inherit java-pkg-simple
 
 EXPORT_FUNCTIONS src_test
 
+# @ECLASS-VARIABLE: JAVA_JUNIT_5_EXTRA_ARGS
+# @DEFAULT_UNSET
+# @DESCRIPTION:
+# An array of extra arguments to be passed into JUnit Platform's
+# ConsoleLauncher class during the src_test phase.
+
 if has test ${JAVA_PKG_IUSE}; then
 	DEPEND="test? (
 		dev-java/junit-jupiter-api:0
@@ -61,6 +67,7 @@ ejunit5() {
 	local runner_args=(
 		# Remove ANSI escape code for coloring to make log files more readable
 		--disable-ansi-colors
+		"${JAVA_JUNIT_5_EXTRA_ARGS[@]}"
 		# Each test class needs to be passed in with a '-c' option
 		$(printf -- '-c=%q ' "${@}" )
 	)
