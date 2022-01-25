@@ -1,0 +1,6 @@
+Because JDK >=9 was used to build this package, source files using
+classes from Java SE API that are only available since Java 9 were
+compiled.  Since these classes are not present on Java 8, the JARs
+built by this package are incompatible with Java 8.
+
+To use this package with Java 8, it must be rebuilt using JDK 8.
