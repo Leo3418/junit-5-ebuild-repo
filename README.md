@@ -31,7 +31,7 @@ Packages may be removed, and incompatible eclass changes may occur at any time.
   packages that depend on JUnit Jupiter
   - [ ] <https://bugs.gentoo.org/829072>
     - [x] `>=dev-java/jnr-ffi-2.2.8`
-    - [ ] `>=dev-java/log4j-api` and `>=dev-java/log4j-api-java9`
+    - [ ] `dev-java/log4j-api` and `dev-java/log4j-api-java9`
   - [ ] `>=dev-java/guava-30.1.1`
 - [ ] Enable `src_test` for all ebuilds for JUnit 5 support in this repository
   - [ ] `dev-java/univocity-parsers`
@@ -52,6 +52,8 @@ Packages may be removed, and incompatible eclass changes may occur at any time.
   - [ ] Test updating JUnit 5 packages to 5.8.2
     - [ ] Test building JUnit 5.8.2 with Java 8, as the upstream starts to
       require JDK 17 for building since 5.8
+- [ ] Update `java-ebuilder` for packages using JUnit Jupiter to set up
+  `JAVA_TESTING_FRAMEWORKS` automatically and skip insertion of JUnit 5 atoms
 
 [junit-5-parameterized-tests]: https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests
 [gh-1]: https://github.com/Leo3418/junit-5-ebuild-repo/issues/1
