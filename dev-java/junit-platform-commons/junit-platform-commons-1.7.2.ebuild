@@ -35,15 +35,17 @@ RDEPEND="
 
 S="${WORKDIR}/junit5-r${MY_PV}/${PN}"
 
-JAVA_SRC_DIR=( src/{main/java,module} )
+JAVA_SRC_DIR=(
+	src/main/java
+	src/module
+)
 
 README_GENTOO_SUFFIX="-java-version-compatibility"
 
 src_prepare() {
 	java-pkg-2_src_prepare
 	if ver_test "$(java-config -g PROVIDES_VERSION)" -ge 9; then
-		NO_JAVA_8_COMPAT="true"
-		# Print a message in pkg_postinst indicating incompatibility with Java 8
+		# Print a message in pkg_postinst indicating potential issue with Java 8
 		FORCE_PRINT_ELOG="true"
 		cp -v src/main/java{9,}/org/junit/platform/commons/util/ModuleUtils.java ||
 			die "Failed to copy source files for Java >=9"
@@ -52,9 +54,9 @@ src_prepare() {
 
 src_install() {
 	java-pkg-simple_src_install
-	[[ "${NO_JAVA_8_COMPAT}" ]] && readme.gentoo_create_doc
+	[[ "${FORCE_PRINT_ELOG}" ]] && readme.gentoo_create_doc
 }
 
 pkg_postinst() {
-	[[ "${NO_JAVA_8_COMPAT}" ]] && readme.gentoo_print_elog
+	[[ "${FORCE_PRINT_ELOG}" ]] && readme.gentoo_print_elog
 }
