@@ -8,11 +8,12 @@
 # Yuan Liao <liaoyuan@gmail.com>
 # @SUPPORTED_EAPIS: 8
 # @PROVIDES: java-pkg-simple
-# @BLURB: Experimental eclass to add support for testing with JUnit 5
+# @BLURB: Experimental eclass to add support for testing on the JUnit Platform
 # @DESCRIPTION:
-# This eclass runs JUnit 5 tests during the src_test phase.  It is an
-# experimental eclass whose code should eventually be merged into
-# java-utils-2.eclass and/or java-pkg-simple.eclass when it is mature.
+# This eclass runs tests on the JUnit Platform (which is a JUnit 5 sub-project)
+# during the src_test phase.  It is an experimental eclass whose code should
+# eventually be merged into java-utils-2.eclass and/or java-pkg-simple.eclass
+# when it is mature.
 
 if [[ ! ${_JAVA_PKG_JUNIT_5_ECLASS} ]]; then
 
@@ -28,7 +29,7 @@ EXPORT_FUNCTIONS src_test
 # @ECLASS-VARIABLE: JAVA_JUNIT_5_EXTRA_ARGS
 # @DEFAULT_UNSET
 # @DESCRIPTION:
-# An array of extra arguments to be passed into JUnit Platform's
+# An array of extra arguments to be passed into the JUnit Platform's
 # ConsoleLauncher class during the src_test phase.
 
 if has test ${JAVA_PKG_IUSE}; then
@@ -41,8 +42,8 @@ fi
 # @FUNCTION: ejunit5
 # @USAGE: [-cp <classpath>|-classpath <classpath>] <classes>
 # @DESCRIPTION:
-# Launches a JVM instance using JUnit 5's console launcher, and runs the
-# specified test classes.
+# Using the specified classpath, launches a JVM instance to run the specified
+# test classes by invoking the JUnit Platform's ConsoleLauncher.
 ejunit5() {
 	debug-print-function ${FUNCNAME} $*
 
@@ -68,19 +69,19 @@ ejunit5() {
 		--disable-ansi-colors
 		"${JAVA_JUNIT_5_EXTRA_ARGS[@]}"
 		# Each test class needs to be passed in with a '-c' option
-		$(printf -- '-c=%q ' "${@}" )
+		$(printf -- '-c=%q ' "${@}")
 	)
 	debug-print "Calling: java -cp \"${cp}\" -Djava.io.tmpdir=\"${T}\" -Djava.awt.headless=true ${JAVA_TEST_EXTRA_ARGS[@]} ${runner} ${@}"
-	# JUnit 5 does not have indicator for in-progress tests
-	ebegin "Running JUnit 5 tests"
+	# By default, ConsoleLauncher does not print test progress indicators
+	ebegin "Running tests on the JUnit Platform"
 	java -cp "${cp}" -Djava.io.tmpdir="${T}/" -Djava.awt.headless=true \
 		${JAVA_TEST_EXTRA_ARGS[@]} ${runner} "${runner_args[@]}" ||
-		die "JUnit 5 tests failed"
+		die "Tests on the JUnit Platform failed"
 }
 
 # @FUNCTION: java-pkg-junit-5_src_test
 # @DESCRIPTION:
-# Runs JUnit 5 tests.
+# Runs tests on the JUnit Platform.
 java-pkg-junit-5_src_test() {
 	if ! has test ${JAVA_PKG_IUSE}; then
 		return
