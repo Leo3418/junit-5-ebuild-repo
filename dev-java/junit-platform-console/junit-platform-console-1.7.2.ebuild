@@ -11,7 +11,7 @@ inherit java-pkg-2 java-pkg-simple optfeature readme.gentoo-r1
 # JUnit 5.x.y = Platform 1.x.y + Jupiter 5.x.y + Vintage 5.x.y
 MY_PV="5.$(ver_cut 2-)"
 
-DESCRIPTION="JUnit Platform Console for JUnit 5"
+DESCRIPTION="Support for launching the JUnit Platform from the console"
 HOMEPAGE="https://junit.org/junit5/"
 SRC_URI="https://github.com/junit-team/junit5/archive/refs/tags/r${MY_PV}.tar.gz -> junit5-r${MY_PV}.tar.gz"
 

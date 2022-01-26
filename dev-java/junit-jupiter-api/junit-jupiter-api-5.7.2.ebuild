@@ -8,7 +8,7 @@ MAVEN_ID="org.junit.jupiter:junit-jupiter-api:5.7.2"
 
 inherit java-pkg-2 java-pkg-simple
 
-DESCRIPTION="JUnit Jupiter API for JUnit 5"
+DESCRIPTION="JUnit Jupiter API for writing the so-called \"JUnit 5 tests\""
 HOMEPAGE="https://junit.org/junit5/"
 SRC_URI="https://github.com/junit-team/junit5/archive/refs/tags/r${PV}.tar.gz -> junit5-r${PV}.tar.gz"
 

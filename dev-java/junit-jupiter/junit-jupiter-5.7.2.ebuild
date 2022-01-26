@@ -7,7 +7,7 @@ MAVEN_ID="org.junit.jupiter:junit-jupiter:5.7.2"
 
 inherit java-pkg-2
 
-DESCRIPTION="JUnit Jupiter (Aggregator) Metapackage for JUnit 5"
+DESCRIPTION="Metapackage that aggregates all JUnit Jupiter modules"
 HOMEPAGE="https://junit.org/junit5/"
 
 LICENSE="metapackage"

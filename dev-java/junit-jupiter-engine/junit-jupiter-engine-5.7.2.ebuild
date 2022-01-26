@@ -8,7 +8,7 @@ MAVEN_ID="org.junit.jupiter:junit-jupiter-engine:5.7.2"
 
 inherit java-pkg-2 java-pkg-simple
 
-DESCRIPTION="JUnit Jupiter Engine for JUnit 5"
+DESCRIPTION="JUnit Platform test engine for running JUnit Jupiter tests"
 HOMEPAGE="https://junit.org/junit5/"
 SRC_URI="https://github.com/junit-team/junit5/archive/refs/tags/r${PV}.tar.gz -> junit5-r${PV}.tar.gz"
 
