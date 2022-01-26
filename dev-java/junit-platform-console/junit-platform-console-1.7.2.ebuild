@@ -6,7 +6,7 @@ EAPI=8
 JAVA_PKG_IUSE="doc source"
 MAVEN_ID="org.junit.platform:junit-platform-console:1.7.2"
 
-inherit java-pkg-2 java-pkg-simple readme.gentoo-r1
+inherit java-pkg-2 java-pkg-simple optfeature readme.gentoo-r1
 
 # JUnit 5.x.y = Platform 1.x.y + Jupiter 5.x.y + Vintage 5.x.y
 MY_PV="5.$(ver_cut 2-)"
@@ -53,8 +53,7 @@ README_GENTOO_SUFFIX="-java-version-compatibility"
 pkg_setup() {
 	java-pkg-2_pkg_setup
 	if ver_test "$(java-config -g PROVIDES_VERSION)" -ge 9; then
-		NO_JAVA_8_COMPAT="true"
-		# Print a message in pkg_postinst indicating incompatibility with Java 8
+		# Print a message in pkg_postinst indicating potential issue with Java 8
 		FORCE_PRINT_ELOG="true"
 		JAVA_SRC_DIR+=( src/main/java9 )
 	fi
@@ -62,9 +61,25 @@ pkg_setup() {
 
 src_install() {
 	java-pkg-simple_src_install
-	[[ "${NO_JAVA_8_COMPAT}" ]] && readme.gentoo_create_doc
+	[[ "${FORCE_PRINT_ELOG}" ]] && readme.gentoo_create_doc
+	# Add JUnit Jupiter and JUnit Vintage engines to the classpath if they are
+	# present on the system, so they can be picked up as test engines by the
+	# JUnit Platform, and users need not add them to the classpath manually
+	java-pkg_register-optional-dependency junit-jupiter-engine
+	java-pkg_register-optional-dependency junit-vintage-engine
+	# junit-jupiter-params is not needed unless there are parameterized tests
+	java-pkg_register-optional-dependency junit-jupiter-params
 }
 
 pkg_postinst() {
-	[[ "${NO_JAVA_8_COMPAT}" ]] && readme.gentoo_print_elog
+	[[ "${FORCE_PRINT_ELOG}" ]] && readme.gentoo_print_elog
+
+	optfeature_header "\nAvailable test engines for the JUnit Platform:"
+	optfeature "running the so-called \"JUnit 5 tests\"" \
+		dev-java/junit-jupiter-engine
+	optfeature "running JUnit 3 and JUnit 4 tests" \
+		dev-java/junit-vintage-engine
+
+	optfeature_header "\nAvailable JUnit 5 modules for special types of tests:"
+	optfeature "parameterized tests" dev-java/junit-jupiter-params
 }
