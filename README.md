@@ -103,6 +103,8 @@ modifications to the ebuild:
    ```
 
 Besides packages supporting JUnit 5, this ebuild repository may also have some
-unrelated ebuilds that run tests on the JUnit Platform using
-`java-pkg-junit-5.eclass`.  Please feel free to consult them or add more
-ebuilds with JUnit Jupiter tests enabled.
+unrelated [example ebuilds][example-ebuilds] that run tests on the JUnit
+Platform using `java-pkg-junit-5.eclass`.  Please feel free to consult them or
+add more ebuilds with JUnit Jupiter tests enabled.
+
+[example-ebuilds]: https://github.com/Leo3418/junit-5-ebuild-repo/discussions/2
