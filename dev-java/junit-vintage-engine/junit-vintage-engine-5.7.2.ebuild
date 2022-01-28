@@ -4,7 +4,7 @@
 EAPI=8
 
 JAVA_PKG_IUSE="doc source"
-MAVEN_ID="org.junit.jupiter:junit-vintage-engine:5.7.2"
+MAVEN_ID="org.junit.vintage:junit-vintage-engine:5.7.2"
 
 inherit java-pkg-2 java-pkg-simple
 
