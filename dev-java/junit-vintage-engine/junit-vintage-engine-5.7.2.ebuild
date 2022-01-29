@@ -20,9 +20,11 @@ KEYWORDS="~amd64"
 PLATFORM_PV="1.$(ver_cut 2-)"
 
 CP_DEPEND="
+	dev-java/junit:4
+	~dev-java/junit-platform-commons-${PLATFORM_PV}:0
 	~dev-java/junit-platform-engine-${PLATFORM_PV}:0
 	dev-java/apiguardian-api:0
-	dev-java/junit:4
+	dev-java/opentest4j:0
 "
 
 DEPEND="
