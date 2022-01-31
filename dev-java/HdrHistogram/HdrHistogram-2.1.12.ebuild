@@ -18,9 +18,6 @@ KEYWORDS="~amd64"
 
 DEPEND="
 	>=virtual/jdk-1.8:*
-	test? (
-		dev-java/junit-vintage-engine:0
-	)
 "
 
 RDEPEND="
@@ -31,7 +28,6 @@ S="${WORKDIR}/${PN}-${P}"
 
 JAVA_SRC_DIR="src/main/java"
 
-JAVA_TEST_GENTOO_CLASSPATH="junit-vintage-engine"
 JAVA_TEST_SRC_DIR="src/test/java"
 JAVA_TEST_RESOURCE_DIRS=( "src/test/resources" )
 
