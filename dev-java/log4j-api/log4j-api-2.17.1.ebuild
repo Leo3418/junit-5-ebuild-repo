@@ -47,8 +47,7 @@ DEPEND=">=virtual/jdk-1.8:*
 		>=dev-java/jackson-databind-2.13.0:0
 		dev-java/assertj-core:2
 		dev-java/maven-bin:3.8
-	)
-	"
+	)"
 
 RDEPEND=">=virtual/jre-1.8:*"
 
@@ -81,6 +80,15 @@ JAVA_TEST_RESOURCE_DIRS=(
 #			rm org/apache/logging/log4j/util/{PrivateSecurityManagerStackTraceUtil,PropertySource}.class || die
 #		popd || die
 #	}
+
+src_test() {
+	if ver_test "$(java-config -g PROVIDES_VERSION)" -ge 9; then
+		rm -v "${JAVA_TEST_SRC_DIR}/org/apache/logging/log4j/util/StackLocatorUtilTest.java" ||
+			die "Failed to remove extraneous test file"
+		elog "Removed tests using classes no longer available on Java 9+"
+	fi
+	java-pkg-junit-5_src_test
+}
 
 src_install() {
 	default # https://bugs.gentoo.org/789582
