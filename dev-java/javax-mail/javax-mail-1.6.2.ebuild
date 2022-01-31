@@ -32,10 +32,7 @@ CP_DEPEND="
 "
 
 DEPEND="${CP_DEPEND}
-	>=virtual/jdk-1.8:*
-	test? (
-		dev-java/junit-vintage-engine:0
-	)"
+	>=virtual/jdk-1.8:*"
 
 RDEPEND="${CP_DEPEND}
 	>=virtual/jre-1.8:*"
@@ -49,13 +46,8 @@ JAVA_ENCODING="iso-8859-1"
 JAVA_SRC_DIR="src/main/java"
 JAVA_RESOURCE_DIRS="src/main/resources"
 
-JAVA_TEST_GENTOO_CLASSPATH="junit-vintage-engine"
 JAVA_TEST_SRC_DIR="src/test/java"
 JAVA_TEST_RESOURCE_DIRS="src/test/resources"
-JAVA_JUNIT_5_EXTRA_ARGS=(
-	--details=verbose
-	--exclude-engine=junit-jupiter
-)
 
 src_prepare() {
 	default
