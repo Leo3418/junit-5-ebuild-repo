@@ -67,6 +67,7 @@ ejunit5() {
 	local runner_args=(
 		# Remove ANSI escape code for coloring to make log files more readable
 		--disable-ansi-colors
+		${JAVA_PKG_DEBUG:+--details=verbose}
 		"${JAVA_JUNIT_5_EXTRA_ARGS[@]}"
 		# Each test class needs to be passed in with a '-c' option
 		$(printf -- '-c=%q ' "${@}")
