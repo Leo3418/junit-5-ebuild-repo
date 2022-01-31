@@ -32,9 +32,15 @@ EXPORT_FUNCTIONS src_test
 # An array of extra arguments to be passed into the JUnit Platform's
 # ConsoleLauncher class during the src_test phase.
 
+# TODO: JUnit Vintage is unconditionally enabled for now.  To minimize the set
+# of test dependencies pulled, use of JUnit Jupiter and JUnit Vintage should be
+# controlled by JAVA_TESTING_FRAMEWORKS, and they should be included in DEPEND
+# only if they are added to the variable.  The identifiers for JUnit Jupiter
+# and JUnit Vintage in JAVA_TESTING_FRAMEWORKS are to be determined.
 if has test ${JAVA_PKG_IUSE}; then
 	DEPEND="test? (
 		dev-java/junit-jupiter:0
+		dev-java/junit-vintage-engine:0
 		dev-java/junit-platform-console:0
 	)"
 fi
@@ -90,12 +96,8 @@ java-pkg-junit-5_src_test() {
 		return
 	fi
 
-	local junit_5_classpath="junit-jupiter"
-	if [[ -z "${JAVA_TEST_GENTOO_CLASSPATH}" ]]; then
-		JAVA_TEST_GENTOO_CLASSPATH="${junit_5_classpath}"
-	else
-		JAVA_TEST_GENTOO_CLASSPATH+=" ${junit_5_classpath}"
-	fi
+	local junit_5_classpath="junit-jupiter junit-vintage-engine"
+	JAVA_TEST_GENTOO_CLASSPATH+=" ${junit_5_classpath}"
 	java-pkg-simple_src_test
 
 	local classes="target/test-classes"
