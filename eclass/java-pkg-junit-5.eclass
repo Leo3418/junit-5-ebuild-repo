@@ -93,7 +93,7 @@ java-pkg-junit-5_src_test() {
 	if [[ -z "${JAVA_TEST_GENTOO_CLASSPATH}" ]]; then
 		JAVA_TEST_GENTOO_CLASSPATH="${junit_5_classpath}"
 	else
-		JAVA_TEST_GENTOO_CLASSPATH+=",${junit_5_classpath}"
+		JAVA_TEST_GENTOO_CLASSPATH+=" ${junit_5_classpath}"
 	fi
 	java-pkg-simple_src_test
 
