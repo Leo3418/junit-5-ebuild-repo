@@ -31,7 +31,8 @@ Packages may be removed, and incompatible eclass changes may occur at any time.
   packages that depend on JUnit Jupiter
   - [ ] <https://bugs.gentoo.org/829072>
     - [x] `>=dev-java/jnr-ffi-2.2.8`
-    - [ ] `dev-java/log4j-api` and `dev-java/log4j-api-java9`
+    - [x] `dev-java/log4j-api`
+    - [ ] `dev-java/log4j-api-java9`
   - [ ] `>=dev-java/guava-30.1.1`
 - [ ] Enable `src_test` for all ebuilds for JUnit 5 support in this repository
   - [ ] `dev-java/univocity-parsers`
