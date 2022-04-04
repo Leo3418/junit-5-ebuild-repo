@@ -30,6 +30,11 @@ S="${WORKDIR}/${P}"
 
 JAVA_SRC_DIR="src/main/java"
 
+src_prepare() {
+	eapply "${FILESDIR}/${P}-explicitly-import-Record.patch"
+	eapply_user
+}
+
 src_install() {
 	java-pkg-simple_src_install
 	einstalldocs # https://bugs.gentoo.org/789582
