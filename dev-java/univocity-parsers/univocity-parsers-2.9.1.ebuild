@@ -32,7 +32,7 @@ JAVA_SRC_DIR="src/main/java"
 
 src_prepare() {
 	eapply "${FILESDIR}/${P}-explicitly-import-Record.patch"
-	eapply_user
+	java-pkg-2_src_prepare
 }
 
 src_install() {
