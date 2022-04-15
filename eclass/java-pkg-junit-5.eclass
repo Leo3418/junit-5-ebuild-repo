@@ -80,7 +80,7 @@ ejunit5() {
 	)
 	debug-print "Calling: java -cp \"${cp}\" -Djava.io.tmpdir=\"${T}\" -Djava.awt.headless=true ${JAVA_TEST_EXTRA_ARGS[@]} ${runner} ${runner_args[@]}"
 	# By default, ConsoleLauncher does not print test progress indicators
-	ebegin "Running tests on the JUnit Platform"
+	einfo "Running tests on the JUnit Platform ..."
 	java -cp "${cp}" -Djava.io.tmpdir="${T}/" -Djava.awt.headless=true \
 		${JAVA_TEST_EXTRA_ARGS[@]} ${runner} "${runner_args[@]}" ||
 		die "Tests on the JUnit Platform failed"
