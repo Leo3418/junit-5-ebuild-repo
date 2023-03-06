@@ -1,4 +1,4 @@
-# Copyright 2022 Gentoo Authors
+# Copyright 2022-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: java-pkg-junit-5.eclass
@@ -39,9 +39,7 @@ EXPORT_FUNCTIONS src_test
 # and JUnit Vintage in JAVA_TESTING_FRAMEWORKS are to be determined.
 if has test ${JAVA_PKG_IUSE}; then
 	DEPEND="test? (
-		dev-java/junit-jupiter:0
-		dev-java/junit-vintage-engine:0
-		dev-java/junit-platform-console:0
+		dev-java/junit:5
 	)"
 fi
 
@@ -60,7 +58,7 @@ ejunit5() {
 		done
 	fi
 
-	local junit="junit-platform-console"
+	local junit="junit-5"
 	local cp=$(java-pkg_getjars --with-dependencies ${junit}${pkgs})
 	if [[ ${1} = -cp || ${1} = -classpath ]]; then
 		cp="${2}:${cp}"
@@ -79,11 +77,10 @@ ejunit5() {
 		$(printf -- '-c=%q ' "${@}")
 	)
 	debug-print "Calling: java -cp \"${cp}\" -Djava.io.tmpdir=\"${T}\" -Djava.awt.headless=true ${JAVA_TEST_EXTRA_ARGS[@]} ${runner} ${runner_args[@]}"
-	# By default, ConsoleLauncher does not print test progress indicators
-	einfo "Running tests on the JUnit Platform ..."
-	java -cp "${cp}" -Djava.io.tmpdir="${T}/" -Djava.awt.headless=true \
-		${JAVA_TEST_EXTRA_ARGS[@]} ${runner} "${runner_args[@]}" ||
-		die "Tests on the JUnit Platform failed"
+	set -- java -cp "${cp}" -Djava.io.tmpdir="${T}/" -Djava.awt.headless=true \
+		${JAVA_TEST_EXTRA_ARGS[@]} ${runner} "${runner_args[@]}"
+	echo "${@}" >&2
+	"${@}" || die "Tests on the JUnit Platform failed"
 }
 
 # @FUNCTION: java-pkg-junit-5_src_test
@@ -96,7 +93,7 @@ java-pkg-junit-5_src_test() {
 		return
 	fi
 
-	local junit_5_classpath="junit-jupiter junit-vintage-engine"
+	local junit_5_classpath="junit-5"
 	JAVA_TEST_GENTOO_CLASSPATH+=" ${junit_5_classpath}"
 	java-pkg-simple_src_test
 
