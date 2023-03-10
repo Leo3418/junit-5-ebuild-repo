@@ -24,7 +24,7 @@ esac
 
 inherit java-pkg-simple
 
-# @ECLASS-VARIABLE: JAVA_JUNIT_5_EXTRA_ARGS
+# @ECLASS_VARIABLE: JAVA_JUNIT_5_EXTRA_ARGS
 # @DEFAULT_UNSET
 # @DESCRIPTION:
 # An array of extra arguments to be passed into the JUnit Platform's
