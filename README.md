@@ -1,76 +1,33 @@
 # JUnit 5 ebuild Repository for Gentoo
 
-This is an ebuild repository containing experimental packages and eclasses that
-support running tests with JUnit 5 from Gentoo package managers.  Its main
-purpose is for early prototyping, development, and testing of JUnit 5 support
-for Gentoo.
+This is an ebuild repository for prototyping, development, and testing of JUnit
+5 support for Gentoo packages.  Right now, it contains:
+- An experimental eclasses `java-pkg-junit-5.eclass`, which allows an ebuild to
+  run a Java package's tests using JUnit 5.
+- Some ebuilds that need JUnit 5 for running tests and therefore use
+  `java-pkg-junit-5.eclass`.  These ebuilds also act as test cases for
+  `java-pkg-junit-5.eclass`.
 
 This ebuild repository should be considered to be in the **alpha** stage.
 Packages may be removed, and incompatible eclass changes may occur at any time.
 
-## Tasks
+## Stages of Work
 
-- [x] Create external dependencies of most JUnit 5 modules
-  - [x] `org.apiguardian:apiguardian-api`
-  - [x] `org.opentest4j:opentest4j`
-- [x] Create a minimal set of packages to support execution of a common JUnit
-  Jupiter test suite
-  - [x] `junit-platform-commons`
-  - [x] `junit-platform-engine`
-  - [x] `junit-platform-launcher`
-  - [x] `junit-platform-reporting`
-  - [x] `junit-platform-console`
-  - [x] `junit-jupiter-api`
-  - [x] `junit-jupiter-engine`
-- [x] Create an experimental eclass that can launch tests on the JUnit Platform
-- [x] Create packages to support [parameterized
-  tests][junit-5-parameterized-tests]
-  - [x] `com.univocity:univocity-parsers:2.9.1`
-  - [x] `junit-jupiter-params`
-- [ ] Use packages and eclasses in this repository to run test suites of
-  packages that depend on JUnit Jupiter
-  - [ ] <https://bugs.gentoo.org/829072>
-    - [x] `>=dev-java/jnr-ffi-2.2.8`
-    - [x] `dev-java/log4j-api`
-    - [ ] `dev-java/log4j-api-java9`
-  - [ ] `>=dev-java/guava-30.1.1`
-- [ ] Enable `src_test` for all ebuilds for JUnit 5 support in this repository
-  - [ ] `dev-java/univocity-parsers`
-  - [ ] `dev-java/junit-*`
-- [ ] Determine keys for JUnit Jupiter in `JAVA_TESTING_FRAMEWORKS`
-  - [ ] `junit-jupiter` or `junit-5`?
-  - [ ] Support for `junit-vintage` as a substitute of `junit-4`?
-    ([Issue][gh-1])
-    - [x] `junit-vintage-engine`
-    - [ ] `junit-jupiter-migrationsupport`
+- [x] Add JUnit 5 to the Gentoo repository (<https://bugs.gentoo.org/839687>)
+- [ ] Add JUnit 5 support to eclasses (<https://bugs.gentoo.org/839681>)
+  - [ ] Determine keys for JUnit Jupiter in `JAVA_TESTING_FRAMEWORKS`
+    - [ ] `junit-jupiter` or `junit-5`?
+    - [ ] Support for `junit-vintage` as a substitute of `junit-4`?
+      ([Issue][gh-1])
+- [ ] Enable test for ebuilds that need JUnit 5 for running tests
+  (<https://bugs.gentoo.org/829072>)
 
-### Stretch Goals
-
-- [ ] Build tools for updating JUnit 5 packages for a new upstream release
-  - [ ] A program/script that bumps all `dev-java/junit-*` packages' version
-  - [ ] Support for automatically modifying `MAVEN_ID` and checking its
-    correctness
-  - [ ] Test updating JUnit 5 packages to 5.8.2
-    - [ ] Test building JUnit 5.8.2 with Java 8, as the upstream starts to
-      require JDK 17 for building since 5.8
-- [ ] Update [`java-ebuilder`][java-ebuilder] for packages using JUnit Jupiter
-  to set up `JAVA_TESTING_FRAMEWORKS` automatically and skip insertion of JUnit
-  5 atoms
-
-[junit-5-parameterized-tests]: https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests
 [gh-1]: https://github.com/Leo3418/junit-5-ebuild-repo/issues/1
-[java-ebuilder]: https://packages.gentoo.org/packages/app-portage/java-ebuilder
 
-## Running JUnit Jupiter Tests from ebuilds Inheriting `java-pkg-simple.eclass`
+## Using JUnit 5 from an ebuild That Uses `java-pkg-simple.eclass`
 
-A small eclass `java-pkg-junit-5.eclass` has been created to facilitate testing
-JUnit 5 support for Gentoo.  Please note that as mentioned above, this eclass
-is to be considered in the alpha stage and should not be used in production.
-However, it is ready for ebuild developers to experiment with running JUnit
-Jupiter tests of a package from its ebuild.
-
-To enable execution of JUnit Jupiter tests, please make the following
-modifications to the ebuild:
+To use JUnit 5 from an ebuild that inherits `java-pkg-simple.eclass`, please
+make the following modifications to the ebuild:
 
 1. If the ebuild is not using EAPI 8, make sure it does so.
 
@@ -99,17 +56,10 @@ modifications to the ebuild:
    +inherit java-pkg-2 java-pkg-simple java-pkg-junit-5
    ```
 
-4. If there is any call to `java-pkg-simple_src_test`, replace them with
-   `java-pkg-junit-5_src_test`.
+4. If the ebuild makes any call to `java-pkg-simple_src_test`, replace them
+   with `java-pkg-junit-5_src_test`.
 
    ```diff
    -	java-pkg-simple_src_test
    +	java-pkg-junit-5_src_test
    ```
-
-Besides packages supporting JUnit 5, this ebuild repository may also have some
-unrelated [example ebuilds][example-ebuilds] that run tests on the JUnit
-Platform using `java-pkg-junit-5.eclass`.  Please feel free to consult them or
-add more ebuilds with JUnit Jupiter tests enabled.
-
-[example-ebuilds]: https://github.com/Leo3418/junit-5-ebuild-repo/discussions/2
