@@ -24,8 +24,6 @@ esac
 
 inherit java-pkg-simple
 
-EXPORT_FUNCTIONS src_test
-
 # @ECLASS-VARIABLE: JAVA_JUNIT_5_EXTRA_ARGS
 # @DEFAULT_UNSET
 # @DESCRIPTION:
@@ -133,3 +131,5 @@ java-pkg-junit-5_src_test() {
 
 _JAVA_PKG_JUNIT_5_ECLASS=1
 fi
+
+EXPORT_FUNCTIONS src_test
