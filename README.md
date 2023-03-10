@@ -61,10 +61,10 @@ make the following modifications to the ebuild:
    replace any occurrence of `java-pkg-2_pkg_setup`.
 
    ```diff
-   	pkg_setup() {
-   -		java-pkg-2_pkg_setup
-   +		java-pkg-junit-5_pkg_setup
-   	}
+    pkg_setup() {
+   -	java-pkg-2_pkg_setup
+   +	java-pkg-junit-5_pkg_setup
+    }
    ```
 
 5. If the ebuild makes any calls to `java-pkg-simple_src_test`, replace them
