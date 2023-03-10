@@ -54,6 +54,13 @@ inherit java-pkg-simple
 # JAVA_TEST_SELECTION_METHOD="console-args".  Any white-space character in this
 # variable's value will separate tokens into different arguments.
 
+# @ECLASS_VARIABLE: JAVA_JUNIT_CONSOLE_COLOR
+# @USER_VARIABLE
+# @DEFAULT_UNSET
+# @DESCRIPTION:
+# If this variable's value is not empty, enable color in the JUnit Platform's
+# ConsoleLauncher's output.
+
 if has test ${JAVA_PKG_IUSE}; then
 	DEPEND="test? (
 		dev-java/junit:5
@@ -129,10 +136,11 @@ _java-pkg-junit-5_ConsoleLauncher() {
 
 	local runner=org.junit.platform.console.ConsoleLauncher
 	local runner_args=(
-		# Remove ANSI escape code for coloring to make log files more readable
-		--disable-ansi-colors
-
 		--fail-if-no-tests
+
+		# By default, remove ANSI escape code for coloring
+		# to make log files more readable
+		$([[ ${JAVA_JUNIT_CONSOLE_COLOR} ]] || echo --disable-ansi-colors)
 
 		${JAVA_PKG_DEBUG:+--details=verbose}
 	)
