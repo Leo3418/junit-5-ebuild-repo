@@ -34,6 +34,8 @@ S="${WORKDIR}/servlet-${PV}-RELEASE"
 
 JAVA_SRC_DIR="api/src/main/java"
 JAVA_RESOURCE_DIRS=( api/src/main/{resources,properties} )
+
+JAVA_TEST_SRC_DIR="api/src/test/java"
 JAVA_TEST_GENTOO_CLASSPATH="hamcrest"
 
 src_prepare() {
