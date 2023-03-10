@@ -56,7 +56,18 @@ make the following modifications to the ebuild:
    +inherit java-pkg-2 java-pkg-simple java-pkg-junit-5
    ```
 
-4. If the ebuild makes any call to `java-pkg-simple_src_test`, replace them
+4. If the ebuild overrides `pkg_setup`, ensure that its `pkg_setup` calls
+   `java-pkg-junit-5_pkg_setup`.  Note that `java-pkg-junit-5_pkg_setup` may
+   replace any occurrence of `java-pkg-2_pkg_setup`.
+
+   ```diff
+   	pkg_setup() {
+   -		java-pkg-2_pkg_setup
+   +		java-pkg-junit-5_pkg_setup
+   	}
+   ```
+
+5. If the ebuild makes any calls to `java-pkg-simple_src_test`, replace them
    with `java-pkg-junit-5_src_test`.
 
    ```diff
