@@ -69,16 +69,20 @@ ejunit5() {
 	local runner_args=(
 		# Remove ANSI escape code for coloring to make log files more readable
 		--disable-ansi-colors
+		--fail-if-no-tests
 		${JAVA_PKG_DEBUG:+--details=verbose}
 		"${JAVA_JUNIT_5_EXTRA_ARGS[@]}"
 		# Each test class needs to be passed in with a '-c' option
 		$(printf -- '-c=%q ' "${@}")
 	)
-	debug-print "Calling: java -cp \"${cp}\" -Djava.io.tmpdir=\"${T}\" -Djava.awt.headless=true ${JAVA_TEST_EXTRA_ARGS[@]} ${runner} ${runner_args[@]}"
 	set -- java -cp "${cp}" -Djava.io.tmpdir="${T}/" -Djava.awt.headless=true \
 		${JAVA_TEST_EXTRA_ARGS[@]} ${runner} "${runner_args[@]}"
+	debug-print "Calling: ${*}"
 	echo "${@}" >&2
-	"${@}" || die "Tests on the JUnit Platform failed"
+	"${@}"
+	local ret=${?}
+	[[ ${ret} -eq 2 ]] && die "No JUnit tests found"
+	[[ ${ret} -eq 0 ]] || die "Tests on the JUnit Platform failed"
 }
 
 # @FUNCTION: java-pkg-junit-5_src_test
