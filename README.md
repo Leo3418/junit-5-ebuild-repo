@@ -1,5 +1,12 @@
 # JUnit 5 ebuild Repository for Gentoo
 
+Note: This branch has been archived.  JUnit 5 has been added to the Gentoo
+repository as a single `dev-java/junit:5` ebuild that builds and installs all
+JUnit 5 modules, instead of multiple ebuilds where each ebuild just handles one
+module.
+
+---
+
 This is an ebuild repository containing experimental packages and eclasses that
 support running tests with JUnit 5 from Gentoo package managers.  Its main
 purpose is for early prototyping, development, and testing of JUnit 5 support
