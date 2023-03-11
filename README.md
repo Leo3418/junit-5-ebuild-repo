@@ -2,7 +2,7 @@
 
 This is an ebuild repository for prototyping, development, and testing of JUnit
 5 support for Gentoo packages.  Right now, it contains:
-- An experimental eclasses `java-pkg-junit-5.eclass`, which allows an ebuild to
+- An experimental eclass `java-pkg-junit-5.eclass`, which allows an ebuild to
   run a Java package's tests using JUnit 5.
 - Some ebuilds that need JUnit 5 for running tests and therefore use
   `java-pkg-junit-5.eclass`.  These ebuilds also act as test cases for
