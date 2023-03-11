@@ -7,7 +7,6 @@
 # @AUTHOR:
 # Yuan Liao <liaoyuan@gmail.com>
 # @SUPPORTED_EAPIS: 8
-# @PROVIDES: java-pkg-simple
 # @BLURB: Experimental eclass to add support for testing on the JUnit Platform
 # @DESCRIPTION:
 # This eclass runs tests on the JUnit Platform (which is a JUnit 5 sub-project)
