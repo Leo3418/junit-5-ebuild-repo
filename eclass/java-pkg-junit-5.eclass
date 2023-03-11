@@ -134,8 +134,14 @@ _java-pkg-junit-5_ConsoleLauncher() {
 	local cp=${1}
 	shift 1
 
+	# Save test reports, which contain information about
+	# the test execution that can be useful to QA checks
+	local reports_dir=${T}/junit-5-reports
+	mkdir -p "${reports_dir}" || die "Failed to create JUnit report directory"
+
 	local runner=org.junit.platform.console.ConsoleLauncher
 	local runner_args=(
+		--reports-dir="${reports_dir}"
 		--fail-if-no-tests
 
 		# By default, remove ANSI escape code for coloring
@@ -163,6 +169,79 @@ _java-pkg-junit-5_ConsoleLauncher() {
 	local ret=${?}
 	[[ ${ret} -eq 2 ]] && die "No JUnit tests found"
 	[[ ${ret} -eq 0 ]] || die "ConsoleLauncher failed"
+
+	# Check whether any test engine installed with dev-java/junit:5 ran tests,
+	# but the test engine's corresponding USE flag is not declared in the
+	# dev-java/junit:5 atom's USE dependencies.
+	#
+	# Suppose an ebuild author has already installed dev-java/junit:5 with the
+	# 'suite' USE flag enabled, and they are creating a new ebuild that has
+	# tests to run on the junit-platform-suite test engine.  If the author had
+	# disabled the 'suite' USE flag, some tests might fail due to the missing
+	# JUnit 5 modules, so the author could realize that the ebuild needs to
+	# depend on dev-java/junit:5[suite].  However, the USE flag is enabled, so
+	# it is possible that all tests pass in the author's environment, thus the
+	# author thinks the ebuild does not have issues and publishes it.
+	#
+	# When another person gets the ebuild and tries to run the tests in an
+	# environment where dev-java/junit:5's 'suite' USE flag is _not_ enabled,
+	# the tests _will_ launch and then fail.  The dev-java/junit:5[suite]
+	# dependency is not declared, so the package manager will not enforce it.
+	#
+	# Therefore, this check is added to help avoid such situations.
+
+	# If a test engine ran any tests, its report will contain a
+	# '<testcase ...>...</testcase>' XML entry for each test it ran
+	local engines_with_tests=$(grep -l '</testcase>' \
+		"${reports_dir}"/TEST-junit-*.xml)
+	# A test engine's report filename format is "TEST-${engine_id}.xml"
+	engines_with_tests="${engines_with_tests//"${reports_dir}/TEST-"}"
+	engines_with_tests="${engines_with_tests//.xml}"
+
+	local engine flag
+	local unexpected_engines=()
+	for engine in ${engines_with_tests}; do
+		case ${engine} in
+			junit-jupiter)
+				# Built unconditionally in dev-java/junit:5; no USE flag needed
+				;;
+			junit-platform-suite)
+				flag=suite
+				;;
+			junit-vintage)
+				flag=vintage
+				;;
+		esac
+		[[ -z ${flag} ]] || _java-pkg-junit-5_dep_has_use "${flag}" ||
+			unexpected_engines+=( "${engine}: dev-java/junit:5[${flag}]" )
+	done
+	if [[ -n ${unexpected_engines[@]} ]]; then
+		eqawarn "Some tests ran on a JUnit Platform test engine whose USE flag"
+		eqawarn "is not enabled by the dev-java/junit:5 atom in DEPEND."
+		eqawarn "Please check the following test engine list and add the"
+		eqawarn "mentioned USE dependencies into DEPEND=\"test? ( ... )\":"
+		for engine in "${unexpected_engines}"; do
+			eqawarn "- ${engine}"
+		done
+	fi
+}
+
+# @FUNCTION: _java-pkg-junit-5_dep_has_use
+# @INTERNAL
+# @USAGE: <flag>
+# @DESCRIPTION:
+# Checks whether dev-java/junit:5 is declared with USE dependency on the
+# specified USE flag (i.e. dev-java/junit:5[<flag>]) in DEPEND.
+# @RETURN: Shell true if the check passed, shell false otherwise
+_java-pkg-junit-5_dep_has_use() {
+	debug-print-function ${FUNCNAME} $*
+
+	local flag=${1}
+
+	local re="\bdev-java/junit(-[0-9].*)?:5\[[^]]*\b${flag}\b[^]]*\]"
+	# Do not match "dev-java/junit:5[-${flag}]"
+	local n_re1="\bdev-java/junit(-[0-9].*)?:5\[[^]]*-\b${flag}\b[^]]*\]"
+	[[ ${DEPEND} =~ ${re} && ! ${DEPEND} =~ ${n_re1} ]]
 }
 
 # @FUNCTION: java-pkg-junit-5_src_test
