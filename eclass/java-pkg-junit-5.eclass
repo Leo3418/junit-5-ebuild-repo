@@ -23,10 +23,10 @@ esac
 
 inherit java-pkg-simple
 
-# @ECLASS_VARIABLE: JAVA_TEST_SELECTION_METHOD
+# @ECLASS_VARIABLE: JAVA_TEST_SELECTION_METHODS
 # @DESCRIPTION:
-# A string that represents the method to discover and select test classes to
-# run on the JUnit Platform.  These values are accepted:
+# A list of strings that represent the methods to discover and select test
+# classes to run on the JUnit Platform.  These values are accepted:
 #
 # - "traditional" (default): Use the same method as java-pkg-simple.eclass.
 #
@@ -44,14 +44,25 @@ inherit java-pkg-simple
 #   Platform's ConsoleLauncher.  In this case, JAVA_JUNIT_CONSOLE_ARGS should
 #   contain arguments to ConsoleLauncher that select tests to run.  Neither
 #   JAVA_TEST_RUN_ONLY nor JAVA_TEST_EXCLUDES is honored.
-: ${JAVA_TEST_SELECTION_METHOD:=traditional}
+#
+# If multiple values separated by white-space characters are included, then
+# this eclass will use every method to run tests once and print a comparison of
+# the number of tests each method ran at the end.
+#
+# Example values:
+# @CODE
+# JAVA_TEST_SELECTION_METHODS="scan-classpath+pattern"
+# JAVA_TEST_SELECTION_METHODS="traditional scan-classpath"
+# @CODE
+: ${JAVA_TEST_SELECTION_METHODS:=traditional}
 
 # @ECLASS_VARIABLE: JAVA_JUNIT_CONSOLE_ARGS
 # @DEFAULT_UNSET
 # @DESCRIPTION:
 # Extra arguments to pass to JUnit Platform's ConsoleLauncher only when
-# JAVA_TEST_SELECTION_METHOD="console-args".  Any white-space character in this
-# variable's value will separate tokens into different arguments.
+# JAVA_TEST_SELECTION_METHODS contains "console-args".  Any white-space
+# character in this variable's value will separate tokens into different
+# arguments.
 
 # @ECLASS_VARIABLE: JAVA_JUNIT_CONSOLE_COLOR
 # @USER_VARIABLE
@@ -59,6 +70,13 @@ inherit java-pkg-simple
 # @DESCRIPTION:
 # If this variable's value is not empty, enable color in the JUnit Platform's
 # ConsoleLauncher's output.
+
+# @ECLASS_VARIABLE: _JAVA_JUNIT_REPORTS_DIR
+# @INTERNAL
+# @DESCRIPTION:
+# The output path of JUnit Platform test reports.  The reports contain
+# information about test executions that are useful to QA checks and analysis.
+_JAVA_JUNIT_REPORTS_DIR="${T}/junit-5-reports"
 
 if has test ${JAVA_PKG_IUSE}; then
 	DEPEND="test? (
@@ -72,23 +90,26 @@ java-pkg-junit-5_pkg_setup() {
 
 	# Note: Each method must have a "_java-pkg-junit-5_src_test_${method}"
 	# function in this eclass
-	local test_selection_methods="
+	local accepted_methods="
 		traditional
 		scan-classpath
 		scan-classpath+pattern
 		console-args
 	"
-	if has ${JAVA_TEST_SELECTION_METHOD} ${test_selection_methods}; then
-		einfo "JUnit Platform test selection method: ${JAVA_TEST_SELECTION_METHOD}"
-	else
-		eerror "Unknown test selection method: ${JAVA_TEST_SELECTION_METHOD}"
-		eerror "Accepted methods are:"
-		local method
-		for method in ${test_selection_methods}; do
-			eerror "- ${method}"
-		done
-		die "Invalid value for JAVA_TEST_SELECTION_METHOD: ${JAVA_TEST_SELECTION_METHOD}"
-	fi
+	local method
+	for method in ${JAVA_TEST_SELECTION_METHODS}; do
+		if has ${method} ${accepted_methods}; then
+			einfo "Using JUnit Platform test selection method: ${method}"
+		else
+			eerror "Unknown test selection method: ${method}"
+			eerror "Accepted methods are:"
+			local m
+			for m in ${accepted_methods}; do
+				eerror "- ${m}"
+			done
+			die "Invalid JAVA_TEST_SELECTION_METHODS value: ${JAVA_TEST_SELECTION_METHODS}"
+		fi
+	done
 }
 
 # @FUNCTION: ejunit5
@@ -135,12 +156,12 @@ _java-pkg-junit-5_ConsoleLauncher() {
 
 	# Save test reports, which contain information about
 	# the test execution that can be useful to QA checks
-	local reports_dir=${T}/junit-5-reports
-	mkdir -p "${reports_dir}" || die "Failed to create JUnit report directory"
+	mkdir -p "${_JAVA_JUNIT_REPORTS_DIR}" ||
+		die "Failed to create JUnit report directory"
 
 	local runner=org.junit.platform.console.ConsoleLauncher
 	local runner_args=(
-		--reports-dir="${reports_dir}"
+		--reports-dir="${_JAVA_JUNIT_REPORTS_DIR}"
 		--fail-if-no-tests
 
 		# By default, remove ANSI escape code for coloring
@@ -192,9 +213,9 @@ _java-pkg-junit-5_ConsoleLauncher() {
 	# If a test engine ran any tests, its report will contain a
 	# '<testcase ...>...</testcase>' XML entry for each test it ran
 	local engines_with_tests=$(grep -l '</testcase>' \
-		"${reports_dir}"/TEST-junit-*.xml)
+		"${_JAVA_JUNIT_REPORTS_DIR}"/TEST-junit-*.xml)
 	# A test engine's report filename format is "TEST-${engine_id}.xml"
-	engines_with_tests="${engines_with_tests//"${reports_dir}/TEST-"}"
+	engines_with_tests="${engines_with_tests//"${_JAVA_JUNIT_REPORTS_DIR}/TEST-"}"
 	engines_with_tests="${engines_with_tests//.xml}"
 
 	local engine flag
@@ -261,7 +282,20 @@ java-pkg-junit-5_src_test() {
 	java-pkg-simple_getclasspath
 	java-pkg-simple_prepend_resources ${classes} "${JAVA_TEST_RESOURCE_DIRS[@]}"
 
-	"_java-pkg-junit-5_src_test_${JAVA_TEST_SELECTION_METHOD}"
+	local method
+	declare -A num_tests
+	for method in ${JAVA_TEST_SELECTION_METHODS}; do
+		"_java-pkg-junit-5_src_test_${method}"
+		num_tests[${method}]="$(\
+			cat "${_JAVA_JUNIT_REPORTS_DIR}"/TEST-*.xml |
+			grep -c '</testcase>')"
+	done
+	if [[ ${#num_tests[@]} -gt 1 ]]; then
+		einfo "Number of tests each test selection method selected:"
+		for method in "${!num_tests[@]}"; do
+			einfo "- ${method}: ${num_tests[${method}]}"
+		done
+	fi
 }
 
 # @FUNCTION: _java-pkg-junit-5_src_test_traditional
