@@ -36,7 +36,7 @@ inherit java-pkg-simple
 #
 # - "scan-classpath+pattern": Rely on the JUnit Platform's ConsoleLauncher's
 #   '--scan-classpath' option to discover tests, but also select the same tests
-#   that java-pkg-simple.eclass would select from the discovered tests
+#   that java-pkg-simple.eclass would select from the discovered tests.
 #   JAVA_TEST_RUN_ONLY and JAVA_TEST_EXCLUDES are both honored.
 #
 # - "console-args": Do not perform any test discovery or test selection;
