@@ -387,7 +387,7 @@ _java-pkg-junit-5_src_test_scan-classpath+pattern() {
 # @INTERNAL
 # @DESCRIPTION:
 # Does not do anything with regards to test selection at all; instead, passes
-# JAVA_JUNIT_CONSOLE_ARGS to JUnit Platform's ConsoleLauncher, and let the
+# JAVA_JUNIT_CONSOLE_ARGS to JUnit Platform's ConsoleLauncher, and lets the
 # arguments in JAVA_JUNIT_CONSOLE_ARGS control test selection.
 _java-pkg-junit-5_src_test_console-args() {
 	_java-pkg-junit-5_ConsoleLauncher "${classpath}" ${JAVA_JUNIT_CONSOLE_ARGS}
