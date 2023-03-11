@@ -244,9 +244,6 @@ _java-pkg-junit-5_dep_has_use() {
 	[[ ${DEPEND} =~ ${re} && ! ${DEPEND} =~ ${n_re1} ]]
 }
 
-# @FUNCTION: java-pkg-junit-5_src_test
-# @DESCRIPTION:
-# Runs tests on the JUnit Platform.
 java-pkg-junit-5_src_test() {
 	if ! has test ${JAVA_PKG_IUSE}; then
 		return
