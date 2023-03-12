@@ -290,6 +290,44 @@ java-pkg-junit-5_src_test() {
 			cat "${_JAVA_JUNIT_REPORTS_DIR}"/TEST-*.xml |
 			grep -c '</testcase>')"
 	done
+
+	# Print any QA notice after JUnit output to make them more prominent,
+	# and before test selection method comparison so they show up with
+	# any _java-pkg-junit-5_ConsoleLauncher's QA notice together
+
+	# Check whether any test classes need an optional dev-java/junit:5
+	# module, but the module's corresponding USE flag is not declared
+	# in the dev-java/junit:5 atom's USE dependencies.  This check's
+	# rationale is similar to that for the test engine check in
+	# _java-pkg-junit-5_ConsoleLauncher.
+	local jdeps_output="${T}/test-classes-jdeps.txt"
+	ebegin "Verifying test classes' dependencies"
+	find "${classes}" -type f -name '*.class' -exec \
+		"$(java-config --jdk-home)/bin/jdeps" {} + > "${jdeps_output}"
+	eend $? || die "jdeps failed"
+	declare -A junit_5_flag_to_package=(
+		[migration-support]=org.junit.jupiter.migrationsupport
+		[testkit]=org.junit.platform.testkit.engine
+	)
+	local flag package
+	local unexpected_packages=()
+	for flag in "${!junit_5_flag_to_package[@]}"; do
+		package="${junit_5_flag_to_package[${flag}]}"
+		if ! _java-pkg-junit-5_dep_has_use "${flag}" &&
+			grep -q -F "${package}" "${jdeps_output}"; then
+			unexpected_packages+=( "${package}: dev-java/junit:5[${flag}]" )
+		fi
+	done
+	if [[ -n ${unexpected_packages[@]} ]]; then
+		eqawarn "Some tests used an optional JUnit 5 module whose USE flag"
+		eqawarn "is not enabled by the dev-java/junit:5 atom in DEPEND."
+		eqawarn "Please check the following Java package list and add the"
+		eqawarn "mentioned USE dependencies into DEPEND=\"test? ( ... )\":"
+		for package in "${unexpected_packages[@]}"; do
+			eqawarn "- ${package}"
+		done
+	fi
+
 	if [[ ${#num_tests[@]} -gt 1 ]]; then
 		einfo "Number of tests each test selection method selected:"
 		for method in "${!num_tests[@]}"; do
