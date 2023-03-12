@@ -327,7 +327,8 @@ _java-pkg-junit-5_post_test_qa_check_use_dep() {
 		die "jdeps failed"
 	declare -A junit_5_flag_to_package=(
 		[migration-support]=org.junit.jupiter.migrationsupport
-		[test-kit]=org.junit.platform.testkit.engine
+		# 'test-kit' USE flag not added to dev-java/junit:5 yet
+		#[test-kit]=org.junit.platform.testkit.engine
 	)
 	local package
 	local unexpected_packages=()
