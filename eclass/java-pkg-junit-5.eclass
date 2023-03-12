@@ -23,10 +23,10 @@ esac
 
 inherit java-pkg-simple
 
-# @ECLASS_VARIABLE: JAVA_TEST_SELECTION_METHODS
+# @ECLASS_VARIABLE: JAVA_TEST_SELECTION_METHOD
 # @DESCRIPTION:
-# A list of strings that represent the methods to discover and select test
-# classes to run on the JUnit Platform.  These values are accepted:
+# A string that represents the method to discover and select test classes to
+# run on the JUnit Platform.  These values are accepted:
 #
 # - "traditional" (default): Use the same method as java-pkg-simple.eclass.
 #
@@ -47,20 +47,21 @@ inherit java-pkg-simple
 #
 # If multiple values separated by white-space characters are included, then
 # this eclass will use every method to run tests once and print a comparison of
-# the number of tests each method ran at the end.
+# the number of tests each method ran at the end.  However, this should only be
+# used in development for comparing and evaluating the methods.
 #
 # Example values:
 # @CODE
-# JAVA_TEST_SELECTION_METHODS="scan-classpath+pattern"
-# JAVA_TEST_SELECTION_METHODS="traditional scan-classpath"
+# JAVA_TEST_SELECTION_METHOD="scan-classpath+pattern"
+# JAVA_TEST_SELECTION_METHOD="traditional scan-classpath"
 # @CODE
-: ${JAVA_TEST_SELECTION_METHODS:=traditional}
+: ${JAVA_TEST_SELECTION_METHOD:=traditional}
 
 # @ECLASS_VARIABLE: JAVA_JUNIT_CONSOLE_ARGS
 # @DEFAULT_UNSET
 # @DESCRIPTION:
 # Extra arguments to pass to JUnit Platform's ConsoleLauncher only when
-# JAVA_TEST_SELECTION_METHODS contains "console-args".  Any white-space
+# JAVA_TEST_SELECTION_METHOD contains "console-args".  Any white-space
 # character in this variable's value will separate tokens into different
 # arguments.
 
@@ -96,20 +97,38 @@ java-pkg-junit-5_pkg_setup() {
 		scan-classpath+pattern
 		console-args
 	"
+
+	show_accepted_methods_and_die() {
+		eerror "Accepted methods are:"
+		local m
+		for m in ${accepted_methods}; do
+			eerror "- ${m}"
+		done
+		die "Invalid JAVA_TEST_SELECTION_METHOD value: ${JAVA_TEST_SELECTION_METHOD}"
+	}
+
+	local methods=()
 	local method
-	for method in ${JAVA_TEST_SELECTION_METHODS}; do
+	for method in ${JAVA_TEST_SELECTION_METHOD}; do
 		if has ${method} ${accepted_methods}; then
-			einfo "Using JUnit Platform test selection method: ${method}"
+			methods+=( ${method} )
 		else
 			eerror "Unknown test selection method: ${method}"
-			eerror "Accepted methods are:"
-			local m
-			for m in ${accepted_methods}; do
-				eerror "- ${m}"
-			done
-			die "Invalid JAVA_TEST_SELECTION_METHODS value: ${JAVA_TEST_SELECTION_METHODS}"
+			show_accepted_methods_and_die
 		fi
 	done
+	if [[ ${#methods[@]} -eq 1 ]]; then
+		einfo "Using JUnit Platform test selection method: ${methods[@]}"
+	elif [[ ${#methods[@]} -gt 1 ]]; then
+		einfo "Using multiple JUnit Platform test selection methods,"
+		einfo "which should only be used for development purposes:"
+		for method in "${methods[@]}"; do
+			einfo "- ${method}"
+		done
+	else
+		eerror "No valid JUnit Platform test selection method specified"
+		show_accepted_methods_and_die
+	fi
 }
 
 # @FUNCTION: ejunit5
@@ -284,7 +303,7 @@ java-pkg-junit-5_src_test() {
 
 	local method
 	declare -A num_tests
-	for method in ${JAVA_TEST_SELECTION_METHODS}; do
+	for method in ${JAVA_TEST_SELECTION_METHOD}; do
 		"_java-pkg-junit-5_src_test_${method}"
 		num_tests[${method}]="$(\
 			cat "${_JAVA_JUNIT_REPORTS_DIR}"/TEST-*.xml |
