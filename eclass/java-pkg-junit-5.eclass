@@ -322,10 +322,9 @@ _java-pkg-junit-5_post_test_qa_check_use_dep() {
 	local unexpected_packages=()
 	for flag in "${!junit_5_flag_to_package[@]}"; do
 		package="${junit_5_flag_to_package[${flag}]}"
-		if ! _java-pkg-junit-5_dep_has_use "${flag}" &&
-			grep -q -F "${package}" "${jdeps_output}"; then
+		_java-pkg-junit-5_dep_has_use "${flag}" ||
+			! grep -q -F "${package}" "${jdeps_output}" ||
 			unexpected_packages+=( "${package}: dev-java/junit:5[${flag}]" )
-		fi
 	done
 	if [[ -n ${unexpected_packages[@]} ]]; then
 		eqawarn "Some tests used an optional JUnit 5 module whose USE flag"
