@@ -240,7 +240,7 @@ _java-pkg-junit-5_ConsoleLauncher() {
 		eqawarn "is not enabled by the dev-java/junit:5 atom in DEPEND."
 		eqawarn "Please check the following test engine list and add the"
 		eqawarn "mentioned USE dependencies into DEPEND=\"test? ( ... )\":"
-		for engine in "${unexpected_engines}"; do
+		for engine in "${unexpected_engines[@]}"; do
 			eqawarn "- ${engine}"
 		done
 	fi
