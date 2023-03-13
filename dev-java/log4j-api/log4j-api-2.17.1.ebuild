@@ -1,8 +1,5 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-
-# Skeleton command:
-# java-ebuilder --generate-ebuild --workdir . --pom log4j-api/pom.xml --download-uri mirror://apache/logging/log4j/2.17.1/apache-log4j-2.17.1-src.tar.gz --slot 2 --keywords "~amd64 ~arm ~arm64 ~ppc64 ~x86" --ebuild log4j-api-2.17.1.ebuild
 
 EAPI=8
 
@@ -14,7 +11,7 @@ inherit java-pkg-2 java-pkg-simple java-pkg-junit-5
 
 DESCRIPTION="The Apache Log4j API"
 HOMEPAGE="https://logging.apache.org/log4j/2.x/"
-SRC_URI="mirror://apache/logging/log4j/${PV}/apache-log4j-${PV}-src.tar.gz"
+SRC_URI="https://archive.apache.org/dist/logging/log4j/${PV}/apache-log4j-${PV}-src.tar.gz"
 
 LICENSE="Apache-2.0"
 SLOT="2"
@@ -42,11 +39,12 @@ KEYWORDS="~amd64"
 DEPEND=">=virtual/jdk-1.8:*
 	dev-java/osgi-core-api:0
 	test? (
+		dev-java/junit:5[vintage]
 		>=dev-java/commons-lang-3.12.0:3.6
 		>=dev-java/jackson-core-2.13.0:0
 		>=dev-java/jackson-databind-2.13.0:0
-		dev-java/assertj-core:2
-		dev-java/maven-bin:3.8
+		dev-java/assertj-core:3
+		dev-java/maven-bin:3.9
 	)"
 
 RDEPEND=">=virtual/jre-1.8:*"
@@ -63,8 +61,8 @@ JAVA_TEST_GENTOO_CLASSPATH="
 	jackson-core
 	jackson-databind
 	commons-lang-3.6
-	assertj-core-2
-	maven-bin-3.8
+	assertj-core-3
+	maven-bin-3.9
 "
 JAVA_TEST_SRC_DIR="${PN}/src/test/java"
 JAVA_TEST_RESOURCE_DIRS=(
