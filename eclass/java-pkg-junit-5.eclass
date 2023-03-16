@@ -129,6 +129,8 @@ java-pkg-junit-5_pkg_setup() {
 		eerror "No valid JUnit Platform test selection method specified"
 		show_accepted_methods_and_die
 	fi
+
+	_JAVA_PKG_JUNIT_5_PKG_SETUP=1
 }
 
 # @FUNCTION: ejunit5
@@ -215,6 +217,12 @@ java-pkg-junit-5_src_test() {
 		return
 	elif ! use test; then
 		return
+	fi
+
+	if [[ ! ${_JAVA_PKG_JUNIT_5_PKG_SETUP} ]]; then
+		eqawarn "java-pkg-junit-5.eclass is inherited, but the"
+		eqawarn "java-pkg-junit-5_pkg_setup function has not been called."
+		eqawarn "Please add the function call to pkg_setup."
 	fi
 
 	local junit_5_classpath="junit-5"
