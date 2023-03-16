@@ -239,7 +239,10 @@ java-pkg-junit-5_src_test() {
 	local method
 	declare -A num_tests
 	for method in ${JAVA_TEST_SELECTION_METHOD}; do
-		"_java-pkg-junit-5_src_test_${method}"
+		local method_func="_java-pkg-junit-5_src_test_${method}"
+		declare -F ${method_func} > /dev/null ||
+			die "Function for \"${method}\" method not found: ${method_func}"
+		${method_func}
 		num_tests[${method}]="$(\
 			cat "${_JAVA_JUNIT_REPORTS_DIR}"/TEST-*.xml |
 			grep -c '</testcase>')"
