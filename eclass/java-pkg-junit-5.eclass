@@ -426,7 +426,7 @@ _java-pkg-junit-5_src_test_scan-classpath() {
 	debug-print-function ${FUNCNAME} $*
 
 	if [[ -n ${JAVA_TEST_RUN_ONLY} ]]; then
-		ejunit5 -classpath "${classpath}" "${JAVA_TEST_RUN_ONLY[@]}"
+		ejunit5 -classpath "${classpath}" ${JAVA_TEST_RUN_ONLY[@]}
 	else
 		local args=(
 			--scan-classpath
